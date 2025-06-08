@@ -4,9 +4,10 @@ Main QwenOpenAIChatCompletionClient class for interacting with Qwen3 models.
 
 import os
 import logging
-from typing import Sequence, Optional, Mapping, Any, AsyncGenerator, Union, Set
+from typing import Sequence, Optional, Mapping, Any, AsyncGenerator, Union
 import copy
 from textwrap import dedent
+from dotenv import load_dotenv
 
 from pydantic import BaseModel
 from autogen_core.models import LLMMessage
@@ -212,21 +213,46 @@ class ModelInfo:
 class QwenOpenAIChatCompletionClient(OpenAIChatCompletionClient):
     """Client for interacting with Qwen3 models via OpenAI-compatible API."""
 
-    def __init__(self,model:str,base_url:str,**kwargs):
+    def _load_env_vars(self):
+        """Load environment variables from .env file if present in current directory or up to three parent directories."""
+        current_dir = os.getcwd()
+        dotenv_path_to_load = None
+
+        temp_dir_to_check = current_dir
+        # Check current directory (loop 0) and up to 3 parent directories (loops 1, 2, 3)
+        for i in range(4):
+            potential_env_path = os.path.join(temp_dir_to_check, ".env")
+            if os.path.exists(potential_env_path) and os.path.isfile(potential_env_path):
+                dotenv_path_to_load = potential_env_path
+                break  # Found .env, stop searching
+
+            if i < 3:  # Only proceed to parent if we haven't checked 3 parents yet
+                parent_dir = os.path.dirname(temp_dir_to_check)
+                if parent_dir == temp_dir_to_check:  # Reached the root directory
+                    break
+                temp_dir_to_check = parent_dir
+            else: # All checks (current + 3 parents) are done
+                break
+
+        if dotenv_path_to_load:
+            load_dotenv(dotenv_path_to_load)
+
+    def __init__(self,model:str = None,base_url:str = None,**kwargs):
         """
         Initialize the QwenOpenAIChatCompletionClient.
 
         Args:
-            model (str): The model to use.
-            base_url (Optional[str]): The base URL for the API.
+            model (str): The model to use. Defaults to MODEL_NAME env var.
+            base_url (Optional[str]): The base URL for the API. Defaults to QWEN_API_BASE or OPENAI_API_BASE env var.
             **kwargs: Additional parameters for the client.
         """
-        self.model = model
+        self._load_env_vars()
+        self.model = model or os.getenv("MODEL_NAME") # Changed from QWEN_MODEL
         if not self.model:
-            raise ValueError("Model is a required parameter.")
-        self.base_url = base_url or os.getenv("OPENAI_API_BASE")
+            raise ValueError("Model is a required parameter. Provide it directly or set MODEL_NAME environment variable.") # Changed from QWEN_MODEL
+        self.base_url = base_url or os.getenv("QWEN_API_BASE") or os.getenv("OPENAI_API_BASE")
         if not self.base_url:
-            raise ValueError("Base URL is a required parameter.")
+            raise ValueError("Base URL is a required parameter. Provide it directly or set QWEN_API_BASE or OPENAI_API_BASE environment variable.")
         if "model_info" not in kwargs:
             kwargs["model_info"] = ModelInfo._MODEL_INFO.get(self.model, ModelInfo.DEFAULT_MODEL_INFO)
 
@@ -321,4 +347,3 @@ class QwenOpenAIChatCompletionClient(OpenAIChatCompletionClient):
             extra_create_args=extra_create_args
         )
         return params
-
