@@ -2,6 +2,14 @@
 
 A Python client library for interacting with Qwen3 and DeepSeek models via OpenAI-compatible API, built on top of AutoGen. This client provides structured output support, function calling, and comprehensive model configuration for building agentic AI applications.
 
+## Installation
+
+Install from PyPI:
+
+```bash
+pip install qwen3-autogen-client
+```
+
 ## Attribution
 
 This project is based on the excellent work from:
@@ -10,7 +18,7 @@ This project is based on the excellent work from:
 
 ## Features
 
-- **Multi-Model Support**: Qwen3 (qwen-max, qwen-plus, qwen-turbo) and DeepSeek (deepseek-chat, deepseek-reasoner) models
+- **Multi-Model Support**: Qwen3, Qwen2.5, and DeepSeek models
 - **Structured Output**: Pydantic model-based JSON schema enforcement for reliable AI responses
 - **Function Calling**: Full support for tool usage and function calling capabilities
 - **Async Support**: Both streaming and non-streaming async operations
@@ -21,6 +29,11 @@ This project is based on the excellent work from:
 ## Supported Models
 
 ### Qwen3 Models
+- `Qwen3-32B` (32K context)
+- `Qwen3-14B` (32K context)
+- `Qwen3-8B` (32K context)
+- `Qwen3-4B` (32K context)
+- `Qwen3-1.7B` (32K context)
 - `qwen-max` (32K context)
 - `qwen-max-latest` (128K context)
 - `qwen-plus` (128K context)
@@ -29,6 +42,12 @@ This project is based on the excellent work from:
 - `qwen-turbo-latest` (1M context)
 - `qwen3-235b-a22b` (128K context)
 - `qwen3-30b-a3b` (128K context)
+
+### Qwen2.5 Models
+- `Qwen2.5-Omni-7B` (32K context, vision)
+- `Qwen2.5-Omni-3B` (32K context, vision)
+- `Qwen2.5-VL-32B-Instruct` (32K context, vision)
+- `Qwen2.5-VL-7B-Instruct` (32K context, vision)
 
 ### DeepSeek Models
 - `deepseek-chat` (64K context, function calling supported)
@@ -51,7 +70,7 @@ pip install -r requirements.txt
 ### Basic Usage
 
 ```python
-from qwen3_client import QwenOpenAIChatCompletionClient
+from qwen3_autogen_client import QwenOpenAIChatCompletionClient
 from autogen_core.models import UserMessage
 
 # Initialize the client

@@ -211,7 +211,7 @@ class ModelInfo:
 
 class QwenOpenAIChatCompletionClient(OpenAIChatCompletionClient):
     """Client for interacting with Qwen3 models via OpenAI-compatible API."""
-    
+
     def __init__(self,model:str,base_url:str,**kwargs):
         """
         Initialize the QwenOpenAIChatCompletionClient.
@@ -243,7 +243,7 @@ class QwenOpenAIChatCompletionClient(OpenAIChatCompletionClient):
     def remaining_tokens(self, messages: Sequence[LLMMessage], *, tools: Sequence[Tool | ToolSchema] = []) -> int:
         token_limit = ModelInfo._MODEL_INFO[self.model]["context_window"]
         return token_limit - self.count_tokens(messages, tools=tools)
-    
+
     @override
     async def create(
             self,
@@ -295,7 +295,7 @@ class QwenOpenAIChatCompletionClient(OpenAIChatCompletionClient):
         messages = copy.deepcopy(messages)
         first_message = messages[0]
         if isinstance(first_message, SystemMessage):
-            first_message.content += dedent(f"""\
+            first_message.content += dedent(f'''\
             
             <output-format>
             Your output must adhere to the following JSON schema format, 
@@ -303,9 +303,9 @@ class QwenOpenAIChatCompletionClient(OpenAIChatCompletionClient):
             
             {json_output.model_json_schema()}
             </output-format>
-            """)
+            ''')
         return messages
-    
+
     def _process_create_args(
             self,
             messages: Sequence[LLMMessage],
@@ -321,3 +321,4 @@ class QwenOpenAIChatCompletionClient(OpenAIChatCompletionClient):
             extra_create_args=extra_create_args
         )
         return params
+
