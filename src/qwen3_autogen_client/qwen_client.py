@@ -4,7 +4,7 @@ Main QwenOpenAIChatCompletionClient class for interacting with Qwen3 models.
 
 import os
 import logging
-from typing import Sequence, override, Optional, Mapping, Any, AsyncGenerator, Union, Set
+from typing import Sequence, Optional, Mapping, Any, AsyncGenerator, Union, Set
 import copy
 from textwrap import dedent
 
@@ -239,12 +239,12 @@ class QwenOpenAIChatCompletionClient(OpenAIChatCompletionClient):
         self._logger.setLevel(logging.INFO)
         self._logger.info(f"Initialized QwenOpenAIChatCompletionClient with model: {self.model} and base URL: {self.base_url}")
 
-    @override
+
     def remaining_tokens(self, messages: Sequence[LLMMessage], *, tools: Sequence[Tool | ToolSchema] = []) -> int:
         token_limit = ModelInfo._MODEL_INFO[self.model]["context_window"]
         return token_limit - self.count_tokens(messages, tools=tools)
 
-    @override
+
     async def create(
             self,
             messages: Sequence[LLMMessage],
@@ -266,7 +266,7 @@ class QwenOpenAIChatCompletionClient(OpenAIChatCompletionClient):
         )
         return result
 
-    @override
+
     async def create_stream(
             self,
             messages: Sequence[LLMMessage],
