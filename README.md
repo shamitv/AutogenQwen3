@@ -146,6 +146,89 @@ result = await client.create(
 )
 ```
 
+## Usage Example: Simple Agent and Function Calling
+
+Below is an example demonstrating how to use a simple agent with function calling capability:
+
+```python
+import os
+import sys
+import asyncio
+import logging
+from datetime import datetime
+from qwen3_autogen_client import QwenOpenAIChatCompletionClient
+from autogen import AssistantAgent
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+async def get_time() -> str:
+    """Returns the current server time in YYYY-MM-DD HH:MM:SS format."""
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+def print_result(result):
+    for msg in result.messages:
+        if hasattr(msg, 'content'):
+            print(f"Message: {msg.content}")
+        elif hasattr(msg, 'tool_calls'):
+            print(f"Tool Calls: {msg.tool_calls}")
+        else:
+            print(f"Unknown message type: {msg}")
+
+async def main():
+    logger.info("Starting Qwen client script")
+    logger.info("Checking required environment variables")
+
+    # 1. Instantiate your LLM client (here using Local Qwen Model)
+    logger.info("Instantiating QwenOpenAIChatCompletionClient")
+    model_client = QwenOpenAIChatCompletionClient(model=os.getenv("MODEL_NAME"), base_url=os.getenv("OPENAI_API_BASE"))
+    logger.info(f"Client instantiated: {model_client}")
+
+    # 2. Create an assistant agent
+    agent = AssistantAgent("assistant", model_client=model_client, tools=[get_time])
+    logger.info(f"Agent instantiated: {agent}")
+    # 3. Run the agent on simple Knowledge task
+    logger.info("Running agent")
+    result = await agent.run(task="What is most common language in the world?/no_think")
+    logger.info(f"Result: {result}")
+    print_result(result)
+
+    # 4. Run the agent on a more complex task
+    logger.info("Running agent on a task that requires function calling")
+    result = await agent.run(task="What is the current server time?, Is it afternoon?")
+    logger.info(f"Result: returned {len(result.messages)} messages")
+    print_result(result)
+    return 0
+
+if __name__ == "__main__":
+    exit_code = asyncio.run(main())
+    sys.exit(exit_code)
+```
+
+### Sample Output
+
+```
+\033[90m2025-06-08 17:18:22,855 - Instantiating QwenOpenAIChatCompletionClient\033[0m
+\033[90m2025-06-08 17:18:22,915 - Initialized QwenOpenAIChatCompletionClient with model: Qwen3 4B and base URL: [MASKED_URL]\033[0m
+\033[90m2025-06-08 17:18:22,915 - Client instantiated: <qwen3_autogen_client.qwen_client.QwenOpenAIChatCompletionClient object at 0x117ab51d0>\033[0m
+\033[90m2025-06-08 17:18:22,916 - Agent instantiated: <autogen_agentchat.agents._assistant_agent.AssistantAgent object at 0x117b33190>\033[0m
+\033[90m2025-06-08 17:18:22,916 - Running agent\033[0m
+\033[90m2025-06-08 17:18:44,330 - HTTP Request: POST [MASKED_URL] "HTTP/1.1 200 OK"\033[0m
+\033[90m2025-06-08 17:18:44,338 - { ... "model": "Qwen3 4B", ... }\033[0m
+\033[90m2025-06-08 17:18:44,339 - Result: messages=[TextMessage(source='user', ...), TextMessage(source='assistant', ...)] stop_reason=None\033[0m
+\033[90m2025-06-08 17:18:44,339 - Running agent on a task that requires function calling\033[0m
+Message: What is most common language in the world?/no_think
+Message: The most common language in the world is Mandarin Chinese. It is spoken by approximately 1.3 billion people, making it the most spoken language globally. However, if we consider the number of native speakers, Spanish is the most spoken language.
+\033[90m2025-06-08 17:18:52,078 - HTTP Request: POST [MASKED_URL] "HTTP/1.1 200 OK"\033[0m
+\033[90m2025-06-08 17:18:52,082 - { ... "model": "Qwen3 4B", ... }\033[0m
+\033[90m2025-06-08 17:18:52,083 - {"type": "ToolCall", "tool_name": "get_time", "arguments": {}, "result": "2025-06-08 17:18:52", "agent_id": null}\033[0m
+\033[90m2025-06-08 17:18:52,083 - Result: returned 4 messages\033[0m
+Message: What is the current server time?, Is it afternoon?
+Message: [FunctionCall(id='1rX3Ta4NkgrJsgzUZrijIxVbxKRNGaDD', arguments='{}', name='get_time')]
+Message: [FunctionExecutionResult(content='2025-06-08 17:18:52', name='get_time', call_id='1rX3Ta4NkgrJsgzUZrijIxVbxKRNGaDD', is_error=False)]
+Message: 2025-06-08 17:18:52
+```
+
 ## Configuration
 
 ### Environment Variables
