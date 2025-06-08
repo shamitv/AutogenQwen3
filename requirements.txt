@@ -3,3 +3,4 @@ autogen-ext[openai]
 python-dotenv
 setuptools
 wheel
+build

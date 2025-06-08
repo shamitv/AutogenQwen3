@@ -4,21 +4,20 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "qwen3-autogen-client"
-version = "0.1.0"
+version = "0.1.1"
 authors = [
   { name="Shamit Verma", email="oss@shamit.in" },
 ]
 description = "A Python client for Qwen and DeepSeek models with AutoGen, supporting structured outputs and function calling."
 readme = "README.md"
 requires-python = ">=3.8"
-license = { text = "MIT" }
+license = { text = "Apache-2.0" }
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Intended Audience :: Developers",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
-    "Framework :: AutoGen",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence"
 ]
 dependencies = [
     "autogen-ext[openai]",

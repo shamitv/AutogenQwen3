@@ -4,9 +4,7 @@ set -e
 # Clean previous builds
 rm -rf dist build *.egg-info
 
-# Build wheel
-python3 -m pip install --upgrade build
-python3 -m build --wheel
+# Build source and binary wheel
+python3 -m build --sdist --wheel
 
-echo "Wheel file created in the dist/ directory."
-
+echo "Source and binary wheel files created in the dist/ directory."

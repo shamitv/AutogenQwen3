@@ -4,11 +4,35 @@ A Python client library for interacting with Qwen3 and DeepSeek models via OpenA
 
 ## Installation
 
-Install from PyPI:
+You can install the package using either of the following methods:
+
+- From PyPI (recommended):
 
 ```bash
 pip install qwen3-autogen-client
 ```
+
+- From source (for development):
+
+```bash
+pip install -e .
+```
+
+Or install dependencies directly:
+
+```bash
+pip install -r requirements.txt
+```
+
+## Build a Wheel File
+
+To build a wheel file for distribution, run the following script from the project root:
+
+```bash
+./build_wheel.sh
+```
+
+This will generate a `.whl` file in the `dist/` directory.
 
 ## Attribution
 
@@ -52,18 +76,6 @@ This project is based on the excellent work from:
 ### DeepSeek Models
 - `deepseek-chat` (64K context, function calling supported)
 - `deepseek-reasoner` (64K context, reasoning mode)
-
-## Installation
-
-```bash
-pip install -e .
-```
-
-Or install dependencies directly:
-
-```bash
-pip install -r requirements.txt
-```
 
 ## Quick Start
 
